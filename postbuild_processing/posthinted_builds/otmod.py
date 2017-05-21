@@ -164,26 +164,26 @@ def main(arguments):
     # iterate through OT tables in the Python fonttools OT table object
     for ot_table in otmods_obj:
         # Confirm that the requested table name for a change is an actual table in the font
-        if ot_table in tt.keys():
+        if ot_table in list(tt.keys()):
             # iterate through the items that require modification in the table
             for field in otmods_obj[ot_table]:
                 # confirm that the field exists in the existing font table
-                if field in tt[ot_table].__dict__.keys():
+                if field in list(tt[ot_table].__dict__.keys()):
                     # modify the field definition in memory
                     tt[ot_table].__dict__[field] = otmods_obj[ot_table][field]
                     # notify user if quiet flag is not set
                     if not quiet:
-                        print("(" + infile + ")[" + ot_table + "][" + field + "] changed to " + str(tt[ot_table].__dict__[field]))
+                        print(("(" + infile + ")[" + ot_table + "][" + field + "] changed to " + str(tt[ot_table].__dict__[field])))
                 else:
-                    print("[otmod.py] WARNING: '" + ot_table + "' table field '" + field + "' was not a table found in the font '" + infile + "'.  No change was made to this table field.")
+                    print(("[otmod.py] WARNING: '" + ot_table + "' table field '" + field + "' was not a table found in the font '" + infile + "'.  No change was made to this table field."))
         else:
-            print("[otmod.py] WARNING: '" + ot_table + "' was not a table found in the font '" + infile + "'.  No change was made to this table.")
+            print(("[otmod.py] WARNING: '" + ot_table + "' was not a table found in the font '" + infile + "'.  No change was made to this table."))
 
     # Write updated font to disk
     try:
         tt.save(outfile)
         if not quiet:
-            print("[otmod.py] '" + infile + "' was updated and the new font write took place on the path '" + outfile + "'.")
+            print(("[otmod.py] '" + infile + "' was updated and the new font write took place on the path '" + outfile + "'."))
     except Exception as e:
         sys.stderr.write("[otmod.py] ERROR: There was an error during the attempt to write the file '" + outfile + "' to disk. " + str(e) + "\n")
         sys.exit(1)

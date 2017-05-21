@@ -32,7 +32,7 @@ def main(fontpaths):
         if os.path.isfile(fontpath):
             # create a fonttools TTFont object using the fontpath
             tt = ttLib.TTFont(fontpath)
-            print("Processing " + fontpath + "...")
+            print(("Processing " + fontpath + "..."))
 
             # define the outfile path
             basename = os.path.basename(fontpath)
@@ -52,16 +52,16 @@ def main(fontpaths):
                 writer.write(report_header_string)
 
             # iterate through the OpenType tables, write table fields in a newline delimited format with YAML syntax
-            for table in tt.keys():
+            for table in list(tt.keys()):
                 table_dict = tt[table].__dict__
                 if len(table_dict) > 0:
                     table_string = yaml_formatter(table, table_dict)
                     with open(outfilepath, 'a') as appender:
                                 appender.write(table_string)
-                    print("[✓] " + table)
+                    print(("[✓] " + table))
                 else:
-                    print("[E] " + table)  # indicate missing table data in standard output, do not write to YAML file
-            print(fontpath + " table report is available in " + outfilepath + "\n")
+                    print(("[E] " + table))  # indicate missing table data in standard output, do not write to YAML file
+            print((fontpath + " table report is available in " + outfilepath + "\n"))
         else:  # not a valid filepath
             sys.stderr.write("Error: '" + fontpath + "' was not found. Please check the filepath.\n\n")
 
@@ -79,7 +79,7 @@ def yaml_formatter(table_name, table_dict):
             return ttfa_yaml_formatter(table_dict)
     else:
         table_string = table_name.strip() + ": {\n"
-        for field in table_dict.keys():
+        for field in list(table_dict.keys()):
             table_string = table_string + (" " * 4) + field + ": " + str(table_dict[field]) + ',\n'
         table_string += "}\n\n"
         return table_string
@@ -103,12 +103,12 @@ def name_yaml_formatter(table_dict):
 def os2_yaml_formatter(table_dict):
     """Formats the YAML table string for OpenType OS/2 tables"""
     table_string = "OS/2: {\n"
-    for field in table_dict.keys():
+    for field in list(table_dict.keys()):
         if field == "panose":
             table_string = table_string + (" "*4) + field + ": {\n"
             panose_string = ""
             panose_dict = table_dict['panose'].__dict__
-            for panose_field in panose_dict.keys():
+            for panose_field in list(panose_dict.keys()):
                 panose_string = panose_string + (" " * 8) + panose_field[1:] + ": " + str(panose_dict[panose_field]) + ",\n"
             table_string = table_string + panose_string + (" " * 4) + "}\n"
         else:
